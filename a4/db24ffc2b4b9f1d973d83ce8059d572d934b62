@@ -1,0 +1,61 @@
+packages/eval-stripe/examples/snake/evals/snake-no-stubs-or-todos.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/other/evals/no-unresolved-tool-errors.md
+  ddd912c688e74c1d 1-20
+packages/eval-stripe/examples/other/DEMO.md
+  ddd912c688e74c1d 1-75
+packages/eval-stripe/examples/other/evals/reads-before-edit.md
+  ddd912c688e74c1d 1-18
+packages/eval-stripe/examples/other/evals/answered-the-question.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/snake/evals/snake-uses-game-loop.md
+  ddd912c688e74c1d 1-15
+packages/eval-stripe/examples/snake/evals/snake-has-food-mechanic.md
+  ddd912c688e74c1d 1-15
+packages/eval-stripe/examples/other/evals/plan-before-multi-step.md
+  ddd912c688e74c1d 1-17
+packages/eval-stripe/examples/snake/evals/snake-creates-game-file.md
+  ddd912c688e74c1d 1-17
+packages/eval-stripe/examples/other/evals/claims-have-evidence.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/other/evals/respects-todo-discipline.md
+  ddd912c688e74c1d 1-19
+packages/eval-stripe/examples/other/evals/concise-when-asked.md
+  ddd912c688e74c1d 1-14
+packages/eval-stripe/examples/snake/evals/snake-handles-collisions.md
+  ddd912c688e74c1d 1-15
+packages/eval-stripe/examples/other/evals/tool-call-budget.md
+  ddd912c688e74c1d 1-13
+packages/eval-stripe/examples/other/evals/no-hallucinated-paths.md
+  ddd912c688e74c1d 1-39
+packages/eval-stripe/examples/snake/evals/snake-ran-the-game.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/other/evals/no-forbidden-commands.md
+  ddd912c688e74c1d 1-25
+packages/eval-stripe/examples/snake/evals/snake-handles-keyboard-input.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/snake/evals/snake-has-game-over-condition.md
+  ddd912c688e74c1d 1-15
+packages/eval-stripe/examples/snake/DEMO.md
+  ddd912c688e74c1d 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "a4db24ffc2b4b9f1d973d83ce8059d572d934b62",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 460,
+      "total_deletions": 0,
+      "accepted_lines": 460,
+      "overriden_lines": 0
+    }
+  }
+}
