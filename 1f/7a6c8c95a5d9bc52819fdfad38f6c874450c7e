@@ -1,0 +1,59 @@
+packages/eval-stripe/examples/bug-fix/evals/tests-now-pass.md
+  ddd912c688e74c1d 1-30
+packages/eval-stripe/examples/bug-fix/evals/diff-is-minimal.md
+  ddd912c688e74c1d 1-17
+packages/eval-stripe/examples/hygiene/DEMO.md
+  ddd912c688e74c1d 1-75
+packages/eval-stripe/examples/refactor/DEMO.md
+  ddd912c688e74c1d 1-87
+packages/eval-stripe/examples/bug-fix/evals/ran-the-tests.md
+  ddd912c688e74c1d 1-20
+packages/eval-stripe/examples/refactor/evals/uses-context-manager-for-files.md
+  ddd912c688e74c1d 1-25
+packages/eval-stripe/examples/refactor/evals/preserves-public-api.md
+  ddd912c688e74c1d 1-29
+packages/eval-stripe/examples/bug-fix/evals/root-cause-not-symptom.md
+  ddd912c688e74c1d 1-28
+packages/eval-stripe/examples/refactor/evals/removed-mutable-default-arg.md
+  ddd912c688e74c1d 1-24
+packages/eval-stripe/examples/refactor/user_manager.py
+  ddd912c688e74c1d 1-125
+packages/eval-stripe/examples/refactor/evals/split-into-modules.md
+  ddd912c688e74c1d 1-20
+packages/eval-stripe/examples/refactor/evals/added-type-hints.md
+  ddd912c688e74c1d 1-15
+packages/eval-stripe/examples/bug-fix/DEMO.md
+  ddd912c688e74c1d 1-95
+packages/eval-stripe/examples/bug-fix/stats.py
+  ddd912c688e74c1d 1-38
+packages/eval-stripe/examples/refactor/evals/explains-decisions.md
+  ddd912c688e74c1d 1-18
+packages/eval-stripe/examples/bug-fix/test_stats.py
+  ddd912c688e74c1d 1-39
+packages/eval-stripe/examples/bug-fix/evals/explains-the-bug.md
+  ddd912c688e74c1d 1-19
+packages/eval-stripe/examples/refactor/evals/removed-global-state.md
+  ddd912c688e74c1d 1-17
+packages/eval-stripe/examples/bug-fix/evals/preserves-test-coverage.md
+  ddd912c688e74c1d 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "1f7a6c8c95a5d9bc52819fdfad38f6c874450c7e",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 953,
+      "total_deletions": 0,
+      "accepted_lines": 953,
+      "overriden_lines": 0
+    }
+  }
+}
