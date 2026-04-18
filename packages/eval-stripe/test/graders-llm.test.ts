@@ -54,6 +54,7 @@ describe("gradeLlm()", () => {
 		const mockRegistry = {
 			find: () => mockModel,
 			getAll: () => [mockModel],
+			getApiKeyAndHeaders: async () => ({ ok: true, apiKey: "test-key", headers: undefined }),
 		} as any;
 
 		// We can't easily mock completeSimple without full provider setup,
@@ -69,7 +70,11 @@ describe("gradeLlm()", () => {
 
 	it("respects timeout", async () => {
 		const mockModel = { id: "m", provider: "anthropic", api: "anthropic-messages" } as any;
-		const mockRegistry = { find: () => mockModel, getAll: () => [mockModel] } as any;
+		const mockRegistry = {
+			find: () => mockModel,
+			getAll: () => [mockModel],
+			getApiKeyAndHeaders: async () => ({ ok: true, apiKey: "test-key", headers: undefined }),
+		} as any;
 
 		const start = Date.now();
 		const result = await gradeLlm(rubricCase, turn, mockRegistry, "m", 200);

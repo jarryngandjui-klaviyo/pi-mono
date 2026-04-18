@@ -122,11 +122,21 @@ export async function gradeLlm(
 		},
 	];
 
+	const auth = await modelRegistry.getApiKeyAndHeaders(model);
+	if (!auth.ok) {
+		return {
+			caseName: evalCase.name,
+			pass: false,
+			reason: `Grader auth error: ${auth.error}`,
+			graderError: true,
+		};
+	}
+
 	const gradeOnce = async (): Promise<GraderResult> => {
 		const response = await completeSimple(
 			model!,
 			{ systemPrompt: GRADER_SYSTEM_PROMPT, messages },
-			{ temperature: 0, signal },
+			{ temperature: 0, signal, apiKey: auth.apiKey, headers: auth.headers },
 		);
 
 		if (response.stopReason === "error" || response.stopReason === "aborted") {
