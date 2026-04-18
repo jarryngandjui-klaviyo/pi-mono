@@ -1,0 +1,31 @@
+packages/eval-stripe/test/settings.test.ts
+  ddd912c688e74c1d 1-58,60-84,86-89
+packages/eval-stripe/src/graders/llm.ts
+  ddd912c688e74c1d 157-160,162-163
+packages/eval-stripe/test/commands.test.ts
+  ddd912c688e74c1d 1-133
+packages/eval-stripe/src/index.ts
+  ddd912c688e74c1d 12-13,18,39,60,112,117-118,121-135
+packages/eval-stripe/src/commands.ts
+  ddd912c688e74c1d 16,25,111,113-114,118-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "2f0f69031003e57622402458885680b9dcd1434f",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 272,
+      "total_deletions": 21,
+      "accepted_lines": 260,
+      "overriden_lines": 3
+    }
+  }
+}
