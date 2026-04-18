@@ -1,0 +1,25 @@
+packages/eval-stripe/src/graders/llm.ts
+  ddd912c688e74c1d 125-134,139
+packages/eval-stripe/test/graders-llm.test.ts
+  ddd912c688e74c1d 57,73-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "246112f50eea2bff9420c1e3b62c34b7adfad014",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 214,
+      "total_deletions": 286,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
