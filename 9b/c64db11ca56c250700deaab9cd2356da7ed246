@@ -1,0 +1,23 @@
+packages/eval-stripe/package.json
+  ddd912c688e74c1d 13-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "9bc64db11ca56c250700deaab9cd2356da7ed246",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
