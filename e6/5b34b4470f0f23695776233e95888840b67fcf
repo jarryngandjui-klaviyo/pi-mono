@@ -1,0 +1,89 @@
+packages/eval-stripe/src/widget.ts
+  ddd912c688e74c1d 1-57
+packages/eval-stripe/tsconfig.json
+  ddd912c688e74c1d 1-10
+packages/eval-stripe/src/index.ts
+  ddd912c688e74c1d 1-123
+packages/eval-stripe/src/types.ts
+  ddd912c688e74c1d 1-117
+packages/eval-stripe/examples/evals/reads-before-edit.md
+  ddd912c688e74c1d 1-18
+packages/eval-stripe/test/color.test.ts
+  ddd912c688e74c1d 1-98
+packages/eval-stripe/test/runner.test.ts
+  ddd912c688e74c1d 1-260
+packages/eval-stripe/examples/evals/respects-todo-discipline.md
+  ddd912c688e74c1d 1-19
+packages/eval-stripe/examples/evals/answered-the-question.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/test/aggregator.test.ts
+  ddd912c688e74c1d 1-142
+packages/eval-stripe/src/color.ts
+  ddd912c688e74c1d 1-150
+packages/eval-stripe/src/graders/llm.ts
+  ddd912c688e74c1d 1-184
+packages/eval-stripe/test/graders-llm.test.ts
+  ddd912c688e74c1d 1-82
+packages/eval-stripe/examples/evals/plan-before-multi-step.md
+  ddd912c688e74c1d 1-17
+packages/eval-stripe/tsconfig.build.json
+  ddd912c688e74c1d 1-9
+packages/eval-stripe/src/activate.ts
+  ddd912c688e74c1d 1-64
+packages/eval-stripe/test/sandbox.test.ts
+  ddd912c688e74c1d 1-98
+packages/eval-stripe/src/graders/deterministic.ts
+  ddd912c688e74c1d 1-30
+packages/eval-stripe/package.json
+  ddd912c688e74c1d 1-42
+packages/eval-stripe/examples/evals/tool-call-budget.md
+  ddd912c688e74c1d 1-13
+packages/eval-stripe/examples/evals/claims-have-evidence.md
+  ddd912c688e74c1d 1-16
+packages/eval-stripe/examples/evals/no-unresolved-tool-errors.md
+  ddd912c688e74c1d 1-20
+packages/eval-stripe/src/commands.ts
+  ddd912c688e74c1d 1-170
+packages/eval-stripe/examples/evals/no-hallucinated-paths.md
+  ddd912c688e74c1d 1-39
+packages/eval-stripe/test/activate.test.ts
+  ddd912c688e74c1d 1-141
+packages/coding-agent/src/core/settings-manager.ts
+  ddd912c688e74c1d 98-113
+packages/eval-stripe/src/aggregator.ts
+  ddd912c688e74c1d 1-88
+packages/eval-stripe/src/sandbox.ts
+  ddd912c688e74c1d 1-79
+packages/eval-stripe/src/cases.ts
+  ddd912c688e74c1d 1-149
+packages/eval-stripe/examples/evals/concise-when-asked.md
+  ddd912c688e74c1d 1-14
+packages/eval-stripe/src/runner.ts
+  ddd912c688e74c1d 1-253
+packages/eval-stripe/examples/evals/no-forbidden-commands.md
+  ddd912c688e74c1d 1-25
+packages/eval-stripe/test/cases.test.ts
+  ddd912c688e74c1d 1-183
+packages/eval-stripe/vitest.config.ts
+  ddd912c688e74c1d 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "e65b34b4470f0f23695776233e95888840b67fcf",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 2909,
+      "total_deletions": 157,
+      "accepted_lines": 2752,
+      "overriden_lines": 0
+    }
+  }
+}
