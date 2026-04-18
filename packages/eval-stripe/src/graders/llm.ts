@@ -154,10 +154,13 @@ export async function gradeLlm(
 	let attempt = 0;
 	while (attempt < 2) {
 		try {
-			const timeoutPromise = new Promise<never>((_, reject) =>
-				setTimeout(() => reject(new Error(`Grader timed out after ${timeoutMs}ms`)), timeoutMs),
-			);
-			return await Promise.race([gradeOnce(), timeoutPromise]);
+			let timerId: ReturnType<typeof setTimeout> | undefined;
+			const timeoutPromise = new Promise<never>((_, reject) => {
+				timerId = setTimeout(() => reject(new Error(`Grader timed out after ${timeoutMs}ms`)), timeoutMs);
+			});
+			const result = await Promise.race([gradeOnce().finally(() => clearTimeout(timerId)), timeoutPromise]);
+			clearTimeout(timerId);
+			return result;
 		} catch (err) {
 			attempt++;
 			if (attempt >= 2 || signal?.aborted) {

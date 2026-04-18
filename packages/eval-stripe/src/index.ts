@@ -9,11 +9,13 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
 import { Aggregator } from "./aggregator.js";
 import { loadCases } from "./cases.js";
 import { registerEvalCommands } from "./commands.js";
 import { Runner } from "./runner.js";
-import type { AggregatedScore, EvalSettings } from "./types.js";
+import type { AggregatedScore, EvalCase, EvalSettings } from "./types.js";
 import { renderWidget } from "./widget.js";
 
 const DEFAULT_SETTINGS: Required<EvalSettings> = {
@@ -34,6 +36,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 	let aggregator = new Aggregator(settings.window);
 	let runner: Runner | null = null;
 	let lastScore: AggregatedScore | null = null;
+	let loadedCases: EvalCase[] = [];
 
 	// -------------------------------------------------------------------------
 	// Session start — load settings + cases, initialize runner, show idle bar
@@ -54,6 +57,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 		for (const err of errors) {
 			console.error(`[eval-stripe] Case load error: ${err}`);
 		}
+		loadedCases = cases;
 
 		// Initialise aggregator + runner
 		aggregator = new Aggregator(settings.window);
@@ -105,19 +109,28 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 			if (runner) runner.updateSettings(s);
 		},
 		getLastScore: () => lastScore,
+		getCases: () => loadedCases,
 	});
 }
 
 // ---------------------------------------------------------------------------
-// Read evals.* settings from the extension context.
-// The plan calls for settings-manager integration; we extend the Settings
-// interface via module augmentation below, and read values where available.
+// Read evals.* settings from .pi/settings.json in the project directory,
+// merged over DEFAULT_SETTINGS so unset fields fall back to defaults.
 // ---------------------------------------------------------------------------
 
-function readEvalSettings(_ctx: { cwd: string }): Required<EvalSettings> {
-	// For now, return defaults. Settings integration (reading from settings.json
-	// via the settings-manager typed extension) is done in the settings patch below.
-	// A full integration would read ctx.sessionManager settings; that requires
-	// the settings-manager to expose evals.* keys which we add via types-only patch.
-	return { ...DEFAULT_SETTINGS };
+function readEvalSettings(ctx: { cwd: string }): Required<EvalSettings> {
+	const settingsPath = join(ctx.cwd, ".pi", "settings.json");
+	if (!existsSync(settingsPath)) {
+		return { ...DEFAULT_SETTINGS };
+	}
+
+	try {
+		const raw = readFileSync(settingsPath, "utf8");
+		const parsed = JSON.parse(raw) as { evals?: Partial<EvalSettings> };
+		const evalsBlock = parsed.evals ?? {};
+		return { ...DEFAULT_SETTINGS, ...evalsBlock };
+	} catch {
+		// Malformed settings.json — fall back to defaults silently
+		return { ...DEFAULT_SETTINGS };
+	}
 }

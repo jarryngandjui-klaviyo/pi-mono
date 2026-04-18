@@ -13,7 +13,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import type { Aggregator } from "./aggregator.js";
 import type { Runner } from "./runner.js";
-import type { AggregatedScore, EvalSettings } from "./types.js";
+import type { AggregatedScore, EvalCase, EvalSettings } from "./types.js";
 import { renderWidget } from "./widget.js";
 
 export interface CommandDeps {
@@ -22,6 +22,7 @@ export interface CommandDeps {
 	getSettings: () => Required<EvalSettings>;
 	setSettings: (s: Required<EvalSettings>) => void;
 	getLastScore: () => AggregatedScore | null;
+	getCases: () => EvalCase[];
 }
 
 export function registerEvalCommands(pi: ExtensionAPI, deps: CommandDeps): void {
@@ -107,15 +108,18 @@ async function handleLast(ctx: ExtensionCommandContext, deps: CommandDeps): Prom
 }
 
 async function handleList(ctx: ExtensionCommandContext, deps: CommandDeps): Promise<void> {
-	const agg = deps.getAggregator();
-	const lastResult = agg.getLastTurnResult();
+	const cases = deps.getCases();
 
-	if (!lastResult) {
-		ctx.ui.notify("eval: cases loaded. Fire a turn to see results.", "info");
+	if (cases.length === 0) {
+		ctx.ui.notify("eval: no cases loaded — check evals.path", "warning");
 		return;
 	}
 
-	ctx.ui.notify(`eval: ${lastResult.activated} cases ran last turn. Use /eval last for details.`, "info");
+	const lines: string[] = [`eval: ${cases.length} case(s) loaded`, ""];
+	for (const c of cases) {
+		lines.push(`  ${c.name} — ${c.kind} — ${c.description}`);
+	}
+	ctx.ui.notify(lines.join("\n"), "info");
 }
 
 async function handleOpen(ctx: ExtensionCommandContext, deps: CommandDeps, name: string): Promise<void> {
