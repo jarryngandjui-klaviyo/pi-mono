@@ -1,0 +1,42 @@
+{
+	"name": "@mariozechner/pi-eval-stripe",
+	"version": "0.66.1",
+	"description": "Live eval progress bar extension for Pi — grades agent turns and renders a segmented stripe above the input",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"examples",
+		"README.md"
+	],
+	"scripts": {
+		"clean": "shx rm -rf dist",
+		"build": "tsc -p tsconfig.build.json",
+		"dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+		"test": "vitest --run"
+	},
+	"dependencies": {
+		"@mariozechner/pi-ai": "^0.66.1",
+		"@mariozechner/pi-coding-agent": "^0.66.1",
+		"js-yaml": "^4.1.0"
+	},
+	"devDependencies": {
+		"@types/js-yaml": "^4.0.9",
+		"@types/node": "^24.3.0",
+		"typescript": "^5.7.3",
+		"vitest": "^3.2.4",
+		"shx": "^0.4.0"
+	},
+	"keywords": [
+		"pi",
+		"extension",
+		"eval",
+		"harness"
+	],
+	"author": "Mario Zechner",
+	"license": "MIT",
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

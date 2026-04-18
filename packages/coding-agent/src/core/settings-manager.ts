@@ -95,6 +95,22 @@ export interface Settings {
 	showHardwareCursor?: boolean; // Show terminal cursor while still positioning it for IME
 	markdown?: MarkdownSettings;
 	sessionDir?: string; // Custom session storage directory (same format as --session-dir CLI flag)
+	evals?: EvalsSettings; // eval-stripe extension settings
+}
+
+// ---------------------------------------------------------------------------
+// Evals settings (used by packages/eval-stripe extension)
+// ---------------------------------------------------------------------------
+
+export interface EvalsSettings {
+	path?: string; // Directory for eval case files (default: ".pi/evals")
+	enabled?: boolean; // Master toggle (default: true)
+	window?: number | "session"; // Rolling window for score aggregation (default: 1)
+	graderModel?: string; // Default model for llm cases (default: "claude-haiku-4-5-20251001")
+	concurrency?: number; // Parallel grader executions (default: 4)
+	timeoutMs?: number; // Per-case grader timeout ms (default: 5000)
+	sandboxTimeoutMs?: number; // TS sandbox timeout ms (default: 100)
+	barWidth?: number; // Bar width in cells (default: 24)
 }
 
 /** Deep merge settings: project/overrides take precedence, nested objects merge recursively */
