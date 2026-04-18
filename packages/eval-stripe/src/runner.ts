@@ -30,40 +30,24 @@ export function buildTurnContext(messages: AgentMessage[], turnStartMs: number):
 	const toolResults: TurnContext["toolResults"] = [];
 	let modelUsed = "unknown";
 
-	// Walk messages to reconstruct the most recent turn
-	// The last agent_end event messages = full conversation transcript
-	// We want: last user message + last assistant message + tool calls/results since then
+	// Walk messages to reconstruct the most recent turn.
+	// A "turn" is everything from the last user message forward: possibly
+	// multiple assistant messages interleaved with toolResult messages.
+	// `assistant` holds the text of the *final* assistant message (the
+	// summary shown to the user); `toolCalls` aggregates calls from every
+	// assistant message in the turn, in chronological order.
+	let turnStartIdx = 0;
 	for (let i = messages.length - 1; i >= 0; i--) {
-		const msg = messages[i] as any;
+		if ((messages[i] as any).role === "user") {
+			turnStartIdx = i;
+			break;
+		}
+	}
 
-		if (msg.role === "toolResult" && toolResults.findIndex((tr) => tr.id === msg.toolCallId) === -1) {
-			const textContent = (msg.content ?? [])
-				.filter((c: any) => c.type === "text")
-				.map((c: any) => c.text as string)
-				.join("\n");
-			toolResults.unshift({
-				id: msg.toolCallId,
-				output: textContent,
-				error: msg.isError ? textContent : undefined,
-			});
-		} else if (msg.role === "assistant" && assistant === "") {
-			const textBlocks = (msg.content ?? [])
-				.filter((c: any) => c.type === "text")
-				.map((c: any) => c.text as string)
-				.join("\n");
-			assistant = textBlocks;
-			modelUsed = msg.model ?? "unknown";
-
-			// Collect tool calls from this assistant message (in source order)
-			const calls = (msg.content ?? []).filter((c: any) => c.type === "toolCall");
-			for (const tc of calls) {
-				toolCalls.push({
-					name: tc.name,
-					args: tc.arguments ?? {},
-					id: tc.id,
-				});
-			}
-		} else if (msg.role === "user" && user === "") {
+	const turnMessages = messages.slice(turnStartIdx);
+	for (const m of turnMessages) {
+		const msg = m as any;
+		if (msg.role === "user" && user === "") {
 			if (typeof msg.content === "string") {
 				user = msg.content;
 			} else if (Array.isArray(msg.content)) {
@@ -72,8 +56,34 @@ export function buildTurnContext(messages: AgentMessage[], turnStartMs: number):
 					.map((c: any) => c.text as string)
 					.join("\n");
 			}
-			// Stop after the last user message — that's our turn boundary
-			break;
+		} else if (msg.role === "assistant") {
+			const textBlocks = (msg.content ?? [])
+				.filter((c: any) => c.type === "text")
+				.map((c: any) => c.text as string)
+				.join("\n");
+			// Keep overwriting so `assistant` ends up as the final text.
+			if (textBlocks) assistant = textBlocks;
+			modelUsed = msg.model ?? modelUsed;
+			const calls = (msg.content ?? []).filter((c: any) => c.type === "toolCall");
+			for (const tc of calls) {
+				toolCalls.push({
+					name: tc.name,
+					args: tc.arguments ?? {},
+					id: tc.id,
+				});
+			}
+		} else if (msg.role === "toolResult") {
+			const textContent = (msg.content ?? [])
+				.filter((c: any) => c.type === "text")
+				.map((c: any) => c.text as string)
+				.join("\n");
+			if (toolResults.findIndex((tr) => tr.id === msg.toolCallId) === -1) {
+				toolResults.push({
+					id: msg.toolCallId,
+					output: textContent,
+					error: msg.isError ? textContent : undefined,
+				});
+			}
 		}
 	}
 

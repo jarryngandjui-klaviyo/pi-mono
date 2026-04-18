@@ -73,6 +73,75 @@ describe("buildTurnContext()", () => {
 		expect(ctx.assistant).toBe("");
 		expect(ctx.toolCalls).toHaveLength(0);
 	});
+
+	it("aggregates toolCalls across multiple assistant messages in one turn", () => {
+		// Realistic Pi turn: the agent speaks, runs a tool, sees the result,
+		// then speaks again to summarize. The final assistant message carries
+		// no tool calls — but the earlier one does. We must collect both.
+		const messages: AgentMessage[] = [
+			{ role: "user", content: "Run the tests", timestamp: 1000 },
+			{
+				role: "assistant",
+				content: [
+					{ type: "text", text: "Running the tests." },
+					{
+						type: "toolCall",
+						id: "tc1",
+						name: "bash",
+						arguments: { command: "python -m unittest test_stats.py" },
+					},
+				],
+				api: "anthropic-messages",
+				provider: "anthropic",
+				model: "claude-haiku-4-5-20251001",
+				usage: {
+					input: 1,
+					output: 1,
+					cacheRead: 0,
+					cacheWrite: 0,
+					totalTokens: 2,
+					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+				},
+				stopReason: "toolUse",
+				timestamp: 2000,
+			},
+			{
+				role: "toolResult",
+				toolCallId: "tc1",
+				toolName: "bash",
+				content: [{ type: "text", text: "FAILED (failures=1)" }],
+				isError: false,
+				timestamp: 2100,
+			},
+			{
+				role: "assistant",
+				content: [{ type: "text", text: "Here's what broke: one test failed." }],
+				api: "anthropic-messages",
+				provider: "anthropic",
+				model: "claude-haiku-4-5-20251001",
+				usage: {
+					input: 1,
+					output: 1,
+					cacheRead: 0,
+					cacheWrite: 0,
+					totalTokens: 2,
+					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+				},
+				stopReason: "endTurn",
+				timestamp: 2200,
+			},
+		] as any[];
+
+		const ctx = buildTurnContext(messages, Date.now() - 500);
+
+		expect(ctx.toolCalls).toHaveLength(1);
+		expect(ctx.toolCalls[0].name).toBe("bash");
+		expect(ctx.toolCalls[0].args).toMatchObject({ command: expect.stringContaining("unittest") });
+		expect(ctx.toolResults).toHaveLength(1);
+		expect(ctx.toolResults[0].output).toContain("FAILED");
+		// The final assistant message is the summary text shown to the user.
+		expect(ctx.assistant).toBe("Here's what broke: one test failed.");
+	});
 });
 
 // ---------------------------------------------------------------------------
