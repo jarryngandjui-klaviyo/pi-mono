@@ -10,6 +10,9 @@
 		"examples",
 		"README.md"
 	],
+	"pi": {
+		"extensions": ["./dist/index.js"]
+	},
 	"scripts": {
 		"clean": "shx rm -rf dist",
 		"build": "tsc -p tsconfig.build.json",
