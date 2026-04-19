@@ -106,13 +106,21 @@ for entry in "$SUITE_DIR"/*; do
 done
 shopt -u nullglob
 
+# Pick the right default window for this suite.
+# -1 = session-wide (habit/cumulative suites); 1 = per-turn (task-completion suites).
+case "$SUITE" in
+  hygiene|refactor) WIN=-1 ;;
+  snake|bug-fix)    WIN=1  ;;
+  *)                WIN=1  ;;
+esac
+
 cat > "$TARGET/.pi/settings.json" <<EOF
 {
   "extensions": ["$PKG_DIR"],
   "evals": {
     "enabled": true,
     "path": ".pi/evals",
-    "window": 1,
+    "windowDefault": $WIN,
     "graderModel": "claude-haiku-4-5-20251001",
     "barWidth": 24
   }
