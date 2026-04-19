@@ -6,30 +6,20 @@ turns pass, one deliberately regresses, the last brings everything green.
 
 ## Setup
 
-In a scratch workspace:
+From the repo root:
 
 ```bash
-mkdir -p ~/snake-demo/.pi/evals && cd ~/snake-demo
-cp /path/to/eval-stripe/examples/snake/evals/*.md .pi/evals/
+./packages/eval-stripe/scripts/bootstrap-demo.sh snake
 ```
 
-Create `.pi/settings.json`:
+That preps `~/tmp/snake/` with the 8 eval cases and a
+`.pi/settings.json` pointing at the built extension, then launches Pi
+in it. Default `window: 1` is what this demo wants — each bar reading
+reflects only the current turn, so the movement tells a story
+prompt-by-prompt.
 
-```json
-{
-  "extensions": ["/path/to/eval-stripe"],
-  "evals": {
-    "enabled": true,
-    "path": ".pi/evals",
-    "window": 1,
-    "graderModel": "claude-haiku-4-5-20251001",
-    "barWidth": 24
-  }
-}
-```
-
-`window: 1` is important — each bar reading reflects only the current turn,
-so the movement tells a story prompt-by-prompt.
+First time: build the extension once with
+`cd packages/eval-stripe && npm run build`.
 
 ## The six-turn arc
 

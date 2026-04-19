@@ -21,29 +21,25 @@ during any session, not just a single task.
 
 ## Setup
 
+From the repo root:
+
 ```bash
-mkdir -p ~/eval-demo/.pi/evals && cd ~/eval-demo
-cp /path/to/eval-stripe/examples/other/evals/*.md .pi/evals/
+./packages/eval-stripe/scripts/bootstrap-demo.sh hygiene
 ```
 
-`.pi/settings.json`:
+That preps `~/tmp/hygiene/` with the 10 eval cases and a
+`.pi/settings.json` pointing at the built extension, then launches Pi
+in it.
 
-```json
-{
-  "extensions": ["/path/to/eval-stripe"],
-  "evals": {
-    "enabled": true,
-    "path": ".pi/evals",
-    "window": "session",
-    "graderModel": "claude-haiku-4-5-20251001",
-    "barWidth": 24
-  }
-}
-```
+**One tweak for this suite:** the script writes `window: 1`, but these
+cases are about overall habits, not single-turn stunts, so a smoothed
+trend over the whole session is what you want to watch. Edit
+`~/tmp/hygiene/.pi/settings.json` and change `"window": 1` to
+`"window": "session"`, or do it from inside Pi with
+`/eval window session`.
 
-`window: "session"` is right for this suite — these cases are about overall
-habits, not single-turn stunts, so a smoothed trend over the whole session
-is what you want to watch.
+First time: build the extension once with
+`cd packages/eval-stripe && npm run build`.
 
 ## Demo idea: show the bar as behavior accumulates
 

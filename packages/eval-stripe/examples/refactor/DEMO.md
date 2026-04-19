@@ -13,31 +13,24 @@ so the refactor has plenty to fix and each eval has a clear pass/fail signal.
 
 ## Setup
 
-In a scratch workspace:
+From the repo root:
 
 ```bash
-mkdir -p ~/refactor-demo/.pi/evals && cd ~/refactor-demo
-cp /path/to/eval-stripe/examples/refactor/user_manager.py .
-cp /path/to/eval-stripe/examples/refactor/evals/*.md .pi/evals/
+./packages/eval-stripe/scripts/bootstrap-demo.sh refactor
 ```
 
-`.pi/settings.json`:
+That preps `~/tmp/refactor/` with `user_manager.py`, the 7 eval cases,
+and a `.pi/settings.json` pointing at the built extension, then
+launches Pi in it.
 
-```json
-{
-  "extensions": ["/path/to/eval-stripe"],
-  "evals": {
-    "enabled": true,
-    "path": ".pi/evals",
-    "window": "session",
-    "graderModel": "claude-haiku-4-5-20251001",
-    "barWidth": 24
-  }
-}
-```
+**One tweak for this suite:** the script writes `window: 1`, but this
+refactor is a single task done over multiple turns — you want the bar
+to accumulate, not reset. Edit `~/tmp/refactor/.pi/settings.json` and
+change `"window": 1` to `"window": "session"`, or do it from inside Pi
+with `/eval window session`.
 
-`window: "session"` — this is a single-task demo. The bar should accumulate
-as the refactor progresses, not reset turn to turn.
+First time: build the extension once with
+`cd packages/eval-stripe && npm run build`.
 
 ## The eval cases
 

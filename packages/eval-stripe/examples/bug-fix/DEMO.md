@@ -20,30 +20,19 @@ mutates whatever list the caller passed in. The fix is one line:
 
 ## Setup
 
+From the repo root:
+
 ```bash
-mkdir -p ~/bug-fix-demo/.pi/evals && cd ~/bug-fix-demo
-cp /path/to/eval-stripe/examples/bug-fix/stats.py .
-cp /path/to/eval-stripe/examples/bug-fix/test_stats.py .
-cp /path/to/eval-stripe/examples/bug-fix/evals/*.md .pi/evals/
+./packages/eval-stripe/scripts/bootstrap-demo.sh bug-fix
 ```
 
-`.pi/settings.json`:
+That preps `~/tmp/bug-fix/` with `stats.py`, `test_stats.py`, the 6
+eval cases, and a `.pi/settings.json` pointing at the built extension,
+then launches Pi in it. Default `window: 1` is what this demo wants —
+each turn's bar reflects only that turn.
 
-```json
-{
-  "extensions": ["/path/to/eval-stripe"],
-  "evals": {
-    "enabled": true,
-    "path": ".pi/evals",
-    "window": 1,
-    "graderModel": "claude-haiku-4-5-20251001",
-    "barWidth": 24
-  }
-}
-```
-
-`window: 1` — this is a short, single-turn demo. We want each turn's
-bar to reflect just that turn.
+First time: build the extension once with
+`cd packages/eval-stripe && npm run build`.
 
 ## The eval cases
 
