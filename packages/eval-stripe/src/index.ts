@@ -22,6 +22,7 @@ const DEFAULT_SETTINGS: Required<EvalSettings> = {
 	path: ".pi/evals",
 	enabled: true,
 	windowDefault: 1,
+	aggregatorDefault: "last",
 	graderModel: "claude-haiku-4-5-20251001",
 	concurrency: 4,
 	timeoutMs: 5000,
@@ -33,7 +34,7 @@ const WIDGET_KEY = "eval-stripe";
 
 export default function evalStripeExtension(pi: ExtensionAPI): void {
 	let settings: Required<EvalSettings> = { ...DEFAULT_SETTINGS };
-	let aggregator = new Aggregator([], settings.windowDefault);
+	let aggregator = new Aggregator([], settings.windowDefault, settings.aggregatorDefault);
 	let runner: Runner | null = null;
 	let lastScore: AggregatedScore | null = null;
 	let loadedCases: EvalCase[] = [];
@@ -60,7 +61,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 		loadedCases = cases;
 
 		// Initialise aggregator + runner
-		aggregator = new Aggregator(cases, settings.windowDefault);
+		aggregator = new Aggregator(cases, settings.windowDefault, settings.aggregatorDefault);
 		runner = new Runner(cases, aggregator, settings, ctx.modelRegistry);
 		lastScore = null;
 
@@ -106,6 +107,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 		setSettings: (s) => {
 			settings = s;
 			aggregator.setWindowDefault(s.windowDefault);
+			aggregator.setAggregatorDefault(s.aggregatorDefault);
 			if (runner) runner.updateSettings(s);
 		},
 		getLastScore: () => lastScore,
@@ -128,7 +130,12 @@ function readEvalSettings(ctx: { cwd: string }): Required<EvalSettings> {
 		const raw = readFileSync(settingsPath, "utf8");
 		const parsed = JSON.parse(raw) as { evals?: Partial<EvalSettings> };
 		const evalsBlock = parsed.evals ?? {};
-		return { ...DEFAULT_SETTINGS, ...evalsBlock };
+		const merged = { ...DEFAULT_SETTINGS, ...evalsBlock };
+		// Validate aggregatorDefault is a recognized strategy; silently fall back otherwise
+		if (merged.aggregatorDefault !== "all" && merged.aggregatorDefault !== "last") {
+			merged.aggregatorDefault = DEFAULT_SETTINGS.aggregatorDefault;
+		}
+		return merged;
 	} catch {
 		// Malformed settings.json — fall back to defaults silently
 		return { ...DEFAULT_SETTINGS };

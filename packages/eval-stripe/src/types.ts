@@ -33,6 +33,9 @@ export interface TurnContext {
 
 export type EvalKind = "deterministic" | "llm";
 
+/** Aggregation strategy: how windowed history collapses into the bar score. */
+export type AggregatorStrategy = "all" | "last";
+
 /** A single activation predicate node */
 export type ActivatePredicate =
 	| { any_tool: string }
@@ -64,6 +67,13 @@ export interface EvalCase {
 	 * Omitted = use settings.windowDefault.
 	 */
 	window?: number;
+	/**
+	 * Per-case aggregator strategy override (optional).
+	 * "all" = every activation in the window contributes to the bar.
+	 * "last" = only the most recent activation contributes.
+	 * Omitted = use settings.aggregatorDefault.
+	 */
+	aggregator?: AggregatorStrategy;
 	/** Source file path */
 	filePath: string;
 }
@@ -121,6 +131,13 @@ export interface EvalSettings {
 	 * Default: 1.
 	 */
 	windowDefault?: number;
+	/**
+	 * Default aggregation strategy for cases that do not declare their own.
+	 * "all" = every activation contributes to the bar.
+	 * "last" = only the most recent activation contributes.
+	 * Default: "last" (intuitive bar bounded by loaded-case count).
+	 */
+	aggregatorDefault?: AggregatorStrategy;
 	graderModel?: string; // default: "claude-haiku-4-5-20251001"
 	concurrency?: number; // default: 4
 	timeoutMs?: number; // default: 5000

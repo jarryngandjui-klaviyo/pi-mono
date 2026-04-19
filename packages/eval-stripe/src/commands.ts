@@ -6,6 +6,7 @@
  * /eval list        — list all loaded eval cases
  * /eval open <name> — open a case file in the terminal editor
  * /eval window <N>  — change the default aggregation window (use -1 for session)
+ * /eval aggregator  — change the default aggregation strategy (all | last)
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
@@ -13,7 +14,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import type { Aggregator } from "./aggregator.js";
 import type { Runner } from "./runner.js";
-import type { AggregatedScore, EvalCase, EvalSettings } from "./types.js";
+import type { AggregatedScore, AggregatorStrategy, EvalCase, EvalSettings } from "./types.js";
 import { renderWidget } from "./widget.js";
 
 export interface CommandDeps {
@@ -27,9 +28,9 @@ export interface CommandDeps {
 
 export function registerEvalCommands(pi: ExtensionAPI, deps: CommandDeps): void {
 	pi.registerCommand("eval", {
-		description: "Eval stripe commands: run | last | list | open <name> | window <N|-1>",
+		description: "Eval stripe commands: run | last | list | open <name> | window <N|-1> | aggregator <all|last>",
 		getArgumentCompletions(prefix: string) {
-			const cmds = ["run", "last", "list", "open", "window"];
+			const cmds = ["run", "last", "list", "open", "window", "aggregator"];
 			return cmds.filter((c) => c.startsWith(prefix)).map((c) => ({ label: c, value: c }));
 		},
 		handler: async (args: string, ctx: ExtensionCommandContext) => {
@@ -53,9 +54,12 @@ export function registerEvalCommands(pi: ExtensionAPI, deps: CommandDeps): void 
 				case "window":
 					await handleWindow(ctx, deps, rest);
 					break;
+				case "aggregator":
+					await handleAggregator(ctx, deps, rest);
+					break;
 				default:
 					ctx.ui.notify(
-						`eval: unknown subcommand '${sub}'. Use: run | last | list | open <name> | window <N|-1>`,
+						`eval: unknown subcommand '${sub}'. Use: run | last | list | open <name> | window <N|-1> | aggregator <all|last>`,
 						"warning",
 					);
 			}
@@ -174,6 +178,29 @@ async function handleWindow(ctx: ExtensionCommandContext, deps: CommandDeps, raw
 	deps.setSettings({ ...settings, windowDefault: n });
 	const display = n === -1 ? "-1 (session)" : String(n);
 	ctx.ui.notify(`eval: windowDefault set to ${display}`, "info");
+
+	// Re-render widget with updated score
+	const score = deps.getAggregator().score();
+	ctx.ui.setWidget("eval-stripe", renderWidget(score, settings.barWidth));
+}
+
+async function handleAggregator(ctx: ExtensionCommandContext, deps: CommandDeps, raw: string): Promise<void> {
+	if (!raw) {
+		const current = deps.getSettings().aggregatorDefault;
+		ctx.ui.notify(`eval: current aggregatorDefault = ${current}`, "info");
+		return;
+	}
+
+	const strategy = raw.toLowerCase();
+	if (strategy !== "all" && strategy !== "last") {
+		ctx.ui.notify(`eval aggregator: expected 'all' or 'last', got '${raw}'`, "warning");
+		return;
+	}
+
+	const settings = deps.getSettings();
+	const newSettings = { ...settings, aggregatorDefault: strategy as AggregatorStrategy };
+	deps.setSettings(newSettings);
+	ctx.ui.notify(`eval: aggregatorDefault set to ${strategy}`, "info");
 
 	// Re-render widget with updated score
 	const score = deps.getAggregator().score();

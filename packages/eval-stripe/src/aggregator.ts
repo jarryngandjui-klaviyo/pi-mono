@@ -8,11 +8,15 @@
  *   - Positive integer N: keep the last N activations of this case.
  *   - -1 (session sentinel): keep up to MAX_RING_SIZE activations.
  *
+ * Aggregator semantics:
+ *   - "all": every activation in the deque contributes to totals.
+ *   - "last": only the most recent activation contributes.
+ *
  * score() sums (passed, activated) across all current cases' deques and
  * returns a single aggregated score for the widget.
  */
 
-import type { AggregatedScore, EvalCase, GraderResult, TurnResult } from "./types.js";
+import type { AggregatedScore, AggregatorStrategy, EvalCase, GraderResult, TurnResult } from "./types.js";
 import { effectiveWindow, MAX_RING_SIZE } from "./types.js";
 
 export class Aggregator {
@@ -26,10 +30,13 @@ export class Aggregator {
 	private cases: EvalCase[];
 	/** Fallback window for cases that don't declare their own. */
 	private windowDefault: number;
+	/** Fallback aggregator strategy for cases that don't declare their own. */
+	private aggregatorDefault: AggregatorStrategy;
 
-	constructor(cases: EvalCase[], windowDefault: number = 1) {
+	constructor(cases: EvalCase[], windowDefault: number = 1, aggregatorDefault: AggregatorStrategy = "last") {
 		this.cases = cases;
 		this.windowDefault = windowDefault;
+		this.aggregatorDefault = aggregatorDefault;
 	}
 
 	/** Return the effective window for a given case (respects per-case override). */
@@ -37,6 +44,12 @@ export class Aggregator {
 		const c = this.cases.find((ec) => ec.name === caseName);
 		const raw = c?.window ?? this.windowDefault;
 		return effectiveWindow(raw);
+	}
+
+	/** Return the effective aggregator strategy for a given case. */
+	private caseAggregator(caseName: string): AggregatorStrategy {
+		const c = this.cases.find((ec) => ec.name === caseName);
+		return c?.aggregator ?? this.aggregatorDefault;
 	}
 
 	/**
@@ -72,6 +85,11 @@ export class Aggregator {
 	/**
 	 * Compute the aggregated score over all current cases' windows.
 	 * Returns null score when no cases have activated.
+	 *
+	 * For each case:
+	 *   - If aggregator is "all": sum all entries in the deque.
+	 *   - If aggregator is "last": count 1 activation if deque is non-empty;
+	 *     count 1 pass iff the last entry passed.
 	 */
 	score(): AggregatedScore {
 		let totalActivated = 0;
@@ -81,8 +99,17 @@ export class Aggregator {
 			const deque = this.history.get(c.name);
 			if (!deque || deque.length === 0) continue;
 
-			totalActivated += deque.length;
-			totalPassed += deque.filter((gr) => gr.pass).length;
+			const strategy = this.caseAggregator(c.name);
+			if (strategy === "all") {
+				totalActivated += deque.length;
+				totalPassed += deque.filter((gr) => gr.pass).length;
+			} else {
+				// "last"
+				totalActivated += 1;
+				if (deque[deque.length - 1].pass) {
+					totalPassed += 1;
+				}
+			}
 		}
 
 		return {
@@ -128,6 +155,14 @@ export class Aggregator {
 				deque.shift();
 			}
 		}
+	}
+
+	/**
+	 * Update the default aggregator strategy (e.g. from /eval aggregator command).
+	 * Affects score() immediately for cases without per-case overrides.
+	 */
+	setAggregatorDefault(strategy: AggregatorStrategy): void {
+		this.aggregatorDefault = strategy;
 	}
 
 	getLastTurnResult(): TurnResult | null {

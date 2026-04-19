@@ -313,4 +313,119 @@ check: |
 		expect(result.errors).toHaveLength(1);
 		expect(result.errors[0]).toContain("window");
 	});
+
+	// -------------------------------------------------------------------------
+	// Per-case aggregator field
+	// -------------------------------------------------------------------------
+
+	it("parses valid aggregator: all", async () => {
+		writeFileSync(
+			join(evalsDir, "agg-all.md"),
+			`---
+name: agg-all
+description: aggregator all
+kind: deterministic
+aggregator: all
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBe("all");
+	});
+
+	it("parses valid aggregator: last", async () => {
+		writeFileSync(
+			join(evalsDir, "agg-last.md"),
+			`---
+name: agg-last
+description: aggregator last
+kind: deterministic
+aggregator: last
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBe("last");
+	});
+
+	it("omitted aggregator → case.aggregator is undefined", async () => {
+		writeFileSync(
+			join(evalsDir, "no-agg.md"),
+			`---
+name: no-agg
+description: no aggregator field
+kind: deterministic
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBeUndefined();
+	});
+
+	it("rejects aggregator: invalid string", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-string.md"),
+			`---
+name: bad-agg-string
+description: invalid aggregator
+kind: deterministic
+aggregator: every
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+		expect(result.errors[0]).toContain("every");
+	});
+
+	it("rejects aggregator: non-string type (number)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-number.md"),
+			`---
+name: bad-agg-number
+description: invalid aggregator type
+kind: deterministic
+aggregator: 1
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+	});
+
+	it("rejects aggregator: non-string type (boolean)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-bool.md"),
+			`---
+name: bad-agg-bool
+description: invalid aggregator type
+kind: deterministic
+aggregator: true
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+	});
 });

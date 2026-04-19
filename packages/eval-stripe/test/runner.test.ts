@@ -163,6 +163,7 @@ const baseSettings: Required<EvalSettings> = {
 	path: ".pi/evals",
 	enabled: true,
 	windowDefault: 1,
+	aggregatorDefault: "last",
 	graderModel: "claude-haiku-4-5-20251001",
 	concurrency: 4,
 	timeoutMs: 5000,
