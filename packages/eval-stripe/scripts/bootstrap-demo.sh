@@ -106,12 +106,13 @@ for entry in "$SUITE_DIR"/*; do
 done
 shopt -u nullglob
 
-# Pick the right default window for this suite.
-# -1 = session-wide (habit/cumulative suites); 1 = per-turn (task-completion suites).
+# Pick the right defaults for this suite.
+# windowDefault: -1 = session-wide (habit/cumulative); 1 = per-turn (task)
+# aggregatorDefault: "all" = sum every activation; "last" = most recent only
 case "$SUITE" in
-  hygiene|refactor) WIN=-1 ;;
-  snake|bug-fix)    WIN=1  ;;
-  *)                WIN=1  ;;
+  hygiene)          WIN=-1; AGG=all  ;;
+  refactor|snake|bug-fix) WIN=1;  AGG=last ;;
+  *)                WIN=1;  AGG=last ;;
 esac
 
 cat > "$TARGET/.pi/settings.json" <<EOF
@@ -121,6 +122,7 @@ cat > "$TARGET/.pi/settings.json" <<EOF
     "enabled": true,
     "path": ".pi/evals",
     "windowDefault": $WIN,
+    "aggregatorDefault": "$AGG",
     "graderModel": "claude-haiku-4-5-20251001",
     "barWidth": 24
   }

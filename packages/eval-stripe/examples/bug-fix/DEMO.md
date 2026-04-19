@@ -28,8 +28,9 @@ From the repo root:
 
 That preps `~/tmp/bug-fix/` with `stats.py`, `test_stats.py`, the 6
 eval cases, and a `.pi/settings.json` pointing at the built extension,
-then launches Pi in it. Default `windowDefault: 1` is what this demo
-wants — each turn's bar reflects only that turn.
+then launches Pi in it. Default `windowDefault: 1` and `aggregatorDefault: "last"`
+— each turn's bar reflects only that turn. The "last" aggregator ensures each
+case counts as 1 activation (most recent state), not cumulative.
 
 `preserves-test-coverage` overrides to `window: -1` in its frontmatter
 so a test-safe edit from any earlier turn keeps contributing to the

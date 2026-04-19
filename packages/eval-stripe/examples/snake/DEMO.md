@@ -14,9 +14,10 @@ From the repo root:
 
 That preps `~/tmp/snake/` with the 8 eval cases and a
 `.pi/settings.json` pointing at the built extension, then launches Pi
-in it. Default `windowDefault: 1` is what this demo wants — each bar
+in it. Default `windowDefault: 1` and `aggregatorDefault: "last"` — each bar
 reading reflects only the current turn, so the movement tells a story
-prompt-by-prompt.
+prompt-by-prompt. The "last" aggregator means the bar answers "does the
+game currently have X?" rather than "how many turns did X exist for?"
 
 Six feature-presence cases (`snake-handles-collisions`,
 `snake-handles-keyboard-input`, `snake-has-food-mechanic`,
@@ -48,7 +49,8 @@ follow-ups.
 
 - `/eval list` — before turn 1, prove the 8-case suite loaded.
 - `/eval last` — after turn 4, surface which cases flipped red.
-- `/eval window -1` — after turn 6, show the cumulative view.
+- `/eval window -1` — after turn 6, show the cumulative view (but with "last" aggregator still applied).
+- `/eval aggregator all` — optionally, switch to cumulative scoring (sum all activations per case).
 
 ## Tips
 
