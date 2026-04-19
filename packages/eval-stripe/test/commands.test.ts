@@ -51,7 +51,7 @@ function makeDeps(overrides: Partial<CommandDeps> = {}): CommandDeps {
 		getSettings: () => ({
 			path: ".pi/evals",
 			enabled: true,
-			window: 1,
+			windowDefault: 1,
 			graderModel: "claude-haiku-4-5-20251001",
 			concurrency: 4,
 			timeoutMs: 5000,

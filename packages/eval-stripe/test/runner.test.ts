@@ -162,7 +162,7 @@ function makeCase(kind: "deterministic" | "llm", name: string, check = "return t
 const baseSettings: Required<EvalSettings> = {
 	path: ".pi/evals",
 	enabled: true,
-	window: 1,
+	windowDefault: 1,
 	graderModel: "claude-haiku-4-5-20251001",
 	concurrency: 4,
 	timeoutMs: 5000,
@@ -188,8 +188,8 @@ const mockCtx = {
 
 describe("Runner", () => {
 	it("records a turn result for activated deterministic cases", async () => {
-		const agg = new Aggregator(1);
 		const cases = [makeCase("deterministic", "always-pass", "return true;")];
+		const agg = new Aggregator(cases, 1);
 		const runner = new Runner(cases, agg, baseSettings, mockModelRegistry);
 
 		const messages: AgentMessage[] = [
@@ -221,8 +221,8 @@ describe("Runner", () => {
 	});
 
 	it("records a failed case when snippet returns false", async () => {
-		const agg = new Aggregator(1);
 		const cases = [makeCase("deterministic", "always-fail", "return false;")];
+		const agg = new Aggregator(cases, 1);
 		const runner = new Runner(cases, agg, baseSettings, mockModelRegistry);
 
 		const messages: AgentMessage[] = [
@@ -253,8 +253,8 @@ describe("Runner", () => {
 
 	it("cancels previous run when new turn starts", async () => {
 		// Create a case whose snippet would take time if not cancelled
-		const agg = new Aggregator(1);
 		const cases = [makeCase("deterministic", "pass", "return true;")];
+		const agg = new Aggregator(cases, 1);
 		const runner = new Runner(cases, agg, baseSettings, mockModelRegistry);
 
 		const messages: AgentMessage[] = [
@@ -291,13 +291,13 @@ describe("Runner", () => {
 	});
 
 	it("concurrency cap: processes all cases with concurrency=2", async () => {
-		const agg = new Aggregator(1);
 		const cases = [
 			makeCase("deterministic", "c1", "return true;"),
 			makeCase("deterministic", "c2", "return true;"),
 			makeCase("deterministic", "c3", "return false;"),
 			makeCase("deterministic", "c4", "return true;"),
 		];
+		const agg = new Aggregator(cases, 1);
 		const settings = { ...baseSettings, concurrency: 2 };
 		const runner = new Runner(cases, agg, settings, mockModelRegistry);
 

@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 const DEFAULT_SETTINGS = {
 	path: ".pi/evals",
 	enabled: true,
-	window: 1,
+	windowDefault: 1,
 	graderModel: "claude-haiku-4-5-20251001",
 	concurrency: 4,
 	timeoutMs: 5000,
@@ -61,14 +61,14 @@ describe("readEvalSettings()", () => {
 		expect(result).toEqual(DEFAULT_SETTINGS);
 	});
 
-	it("merges evals block over defaults", () => {
+	it("merges evals block over defaults (windowDefault)", () => {
 		writeFileSync(
 			join(tmpDir, ".pi", "settings.json"),
-			JSON.stringify({ evals: { path: ".pi/custom-evals", window: 5, enabled: false } }),
+			JSON.stringify({ evals: { path: ".pi/custom-evals", windowDefault: 5, enabled: false } }),
 		);
 		const result = readEvalSettingsFromDir(tmpDir);
 		expect(result.path).toBe(".pi/custom-evals");
-		expect(result.window).toBe(5);
+		expect(result.windowDefault).toBe(5);
 		expect(result.enabled).toBe(false);
 		// Unset fields fall back
 		expect(result.graderModel).toBe(DEFAULT_SETTINGS.graderModel);
@@ -81,9 +81,18 @@ describe("readEvalSettings()", () => {
 		expect(result).toEqual(DEFAULT_SETTINGS);
 	});
 
-	it("handles session window string value", () => {
-		writeFileSync(join(tmpDir, ".pi", "settings.json"), JSON.stringify({ evals: { window: "session" } }));
+	it("silently ignores old 'window' key (hard rename — no legacy fallback)", () => {
+		// Old settings.json with the old key name; should be ignored and not bleed
+		// into windowDefault
+		writeFileSync(join(tmpDir, ".pi", "settings.json"), JSON.stringify({ evals: { window: 5 } }));
 		const result = readEvalSettingsFromDir(tmpDir);
-		expect(result.window).toBe("session");
+		// Old key is not recognised, so windowDefault stays at default
+		expect(result.windowDefault).toBe(DEFAULT_SETTINGS.windowDefault);
+	});
+
+	it("accepts -1 as a valid windowDefault (session sentinel)", () => {
+		writeFileSync(join(tmpDir, ".pi", "settings.json"), JSON.stringify({ evals: { windowDefault: -1 } }));
+		const result = readEvalSettingsFromDir(tmpDir);
+		expect(result.windowDefault).toBe(-1);
 	});
 });

@@ -21,7 +21,7 @@ import { renderWidget } from "./widget.js";
 const DEFAULT_SETTINGS: Required<EvalSettings> = {
 	path: ".pi/evals",
 	enabled: true,
-	window: 1,
+	windowDefault: 1,
 	graderModel: "claude-haiku-4-5-20251001",
 	concurrency: 4,
 	timeoutMs: 5000,
@@ -33,7 +33,7 @@ const WIDGET_KEY = "eval-stripe";
 
 export default function evalStripeExtension(pi: ExtensionAPI): void {
 	let settings: Required<EvalSettings> = { ...DEFAULT_SETTINGS };
-	let aggregator = new Aggregator(settings.window);
+	let aggregator = new Aggregator([], settings.windowDefault);
 	let runner: Runner | null = null;
 	let lastScore: AggregatedScore | null = null;
 	let loadedCases: EvalCase[] = [];
@@ -60,7 +60,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 		loadedCases = cases;
 
 		// Initialise aggregator + runner
-		aggregator = new Aggregator(settings.window);
+		aggregator = new Aggregator(cases, settings.windowDefault);
 		runner = new Runner(cases, aggregator, settings, ctx.modelRegistry);
 		lastScore = null;
 
@@ -105,7 +105,7 @@ export default function evalStripeExtension(pi: ExtensionAPI): void {
 		getSettings: () => settings,
 		setSettings: (s) => {
 			settings = s;
-			aggregator.setWindow(s.window);
+			aggregator.setWindowDefault(s.windowDefault);
 			if (runner) runner.updateSettings(s);
 		},
 		getLastScore: () => lastScore,

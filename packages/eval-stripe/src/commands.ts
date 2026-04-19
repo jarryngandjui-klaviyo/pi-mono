@@ -5,7 +5,7 @@
  * /eval last        — show per-case results for the most recent turn
  * /eval list        — list all loaded eval cases
  * /eval open <name> — open a case file in the terminal editor
- * /eval window <N|session> — change the aggregation window
+ * /eval window <N>  — change the default aggregation window (use -1 for session)
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
@@ -27,7 +27,7 @@ export interface CommandDeps {
 
 export function registerEvalCommands(pi: ExtensionAPI, deps: CommandDeps): void {
 	pi.registerCommand("eval", {
-		description: "Eval stripe commands: run | last | list | open <name> | window <N|session>",
+		description: "Eval stripe commands: run | last | list | open <name> | window <N|-1>",
 		getArgumentCompletions(prefix: string) {
 			const cmds = ["run", "last", "list", "open", "window"];
 			return cmds.filter((c) => c.startsWith(prefix)).map((c) => ({ label: c, value: c }));
@@ -55,7 +55,7 @@ export function registerEvalCommands(pi: ExtensionAPI, deps: CommandDeps): void 
 					break;
 				default:
 					ctx.ui.notify(
-						`eval: unknown subcommand '${sub}'. Use: run | last | list | open <name> | window <N|session>`,
+						`eval: unknown subcommand '${sub}'. Use: run | last | list | open <name> | window <N|-1>`,
 						"warning",
 					);
 			}
@@ -147,26 +147,22 @@ async function handleOpen(ctx: ExtensionCommandContext, deps: CommandDeps, name:
 
 async function handleWindow(ctx: ExtensionCommandContext, deps: CommandDeps, raw: string): Promise<void> {
 	if (!raw) {
-		const current = deps.getSettings().window;
-		ctx.ui.notify(`eval: current window = ${current}`, "info");
+		const current = deps.getSettings().windowDefault;
+		const display = current === -1 ? "-1 (session)" : String(current);
+		ctx.ui.notify(`eval: current windowDefault = ${display}`, "info");
 		return;
 	}
 
-	let window: number | "session";
-	if (raw === "session") {
-		window = "session";
-	} else {
-		const n = parseInt(raw, 10);
-		if (Number.isNaN(n) || n < 1) {
-			ctx.ui.notify(`eval window: expected a positive integer or 'session', got '${raw}'`, "warning");
-			return;
-		}
-		window = n;
+	const n = parseInt(raw, 10);
+	if (Number.isNaN(n) || !Number.isInteger(n) || (n !== -1 && n < 1)) {
+		ctx.ui.notify(`eval window: expected a positive integer or -1 (session), got '${raw}'`, "warning");
+		return;
 	}
 
 	const settings = deps.getSettings();
-	deps.setSettings({ ...settings, window });
-	ctx.ui.notify(`eval: window set to ${window}`, "info");
+	deps.setSettings({ ...settings, windowDefault: n });
+	const display = n === -1 ? "-1 (session)" : String(n);
+	ctx.ui.notify(`eval: windowDefault set to ${display}`, "info");
 
 	// Re-render widget with updated score
 	const score = deps.getAggregator().score();
