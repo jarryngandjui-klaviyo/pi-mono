@@ -1,0 +1,59 @@
+packages/eval-stripe/examples/hygiene/evals/claims-have-evidence.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/hygiene/evals/concise-when-asked.md
+  fb8d28de783b88f6 8
+packages/eval-stripe/examples/hygiene/evals/no-hallucinated-paths.md
+  fb8d28de783b88f6 36
+packages/eval-stripe/examples/snake/evals/snake-has-food-mechanic.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/snake/evals/snake-handles-keyboard-input.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/hygiene/evals/reads-before-edit.md
+  fb8d28de783b88f6 15
+packages/eval-stripe/examples/hygiene/evals/no-unresolved-tool-errors.md
+  fb8d28de783b88f6 17
+packages/eval-stripe/examples/refactor/DEMO.md
+  fb8d28de783b88f6 26-29
+packages/eval-stripe/examples/refactor/evals/explains-decisions.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/snake/evals/snake-uses-game-loop.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/bug-fix/evals/preserves-test-coverage.md
+  fb8d28de783b88f6 25
+packages/eval-stripe/examples/snake/evals/snake-has-game-over-condition.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/snake/DEMO.md
+  fb8d28de783b88f6 17-18,21-27,51
+packages/eval-stripe/examples/hygiene/DEMO.md
+  fb8d28de783b88f6 34-39
+packages/eval-stripe/examples/hygiene/evals/plan-before-multi-step.md
+  fb8d28de783b88f6 7
+packages/eval-stripe/examples/snake/evals/snake-no-stubs-or-todos.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/bug-fix/DEMO.md
+  fb8d28de783b88f6 31-36
+packages/eval-stripe/examples/snake/evals/snake-handles-collisions.md
+  fb8d28de783b88f6 9
+packages/eval-stripe/examples/hygiene/evals/tool-call-budget.md
+  fb8d28de783b88f6 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "96ea9dbda581efdfb1c4c1a38eeb98a68ba714bb",
+  "prompts": {
+    "fb8d28de783b88f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e11db74-b399-46eb-9493-69678629be5e",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 50,
+      "total_deletions": 17,
+      "accepted_lines": 50,
+      "overriden_lines": 0
+    }
+  }
+}
