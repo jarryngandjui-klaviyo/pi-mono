@@ -4,7 +4,7 @@ description: Bug fix should be a small, targeted change — not a rewrite
 kind: llm
 activate:
   any:
-    - user_message_regex: "bug|failing test|test_stats|stats\\.py"
+    - user_message_regex: "fix|run|bug|failing test|test_stats|stats\\.py"
     - assistant_regex: "stats\\.py"
 ---
 
