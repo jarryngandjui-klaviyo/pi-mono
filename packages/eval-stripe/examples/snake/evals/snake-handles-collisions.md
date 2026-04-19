@@ -6,6 +6,7 @@ activate:
   any:
     - user_message_regex: "snake"
     - assistant_regex: "snake"
+window: -1
 ---
 
 The user asked for a snake game. Pass if the assistant's code handles

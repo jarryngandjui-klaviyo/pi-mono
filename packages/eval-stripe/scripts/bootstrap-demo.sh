@@ -106,13 +106,23 @@ for entry in "$SUITE_DIR"/*; do
 done
 shopt -u nullglob
 
+# Pick the right defaults for this suite.
+# windowDefault: -1 = session-wide (habit/cumulative); 1 = per-turn (task)
+# aggregatorDefault: "all" = sum every activation; "last" = most recent only
+case "$SUITE" in
+  hygiene)          WIN=-1; AGG=all  ;;
+  refactor|snake|bug-fix) WIN=1;  AGG=last ;;
+  *)                WIN=1;  AGG=last ;;
+esac
+
 cat > "$TARGET/.pi/settings.json" <<EOF
 {
   "extensions": ["$PKG_DIR"],
   "evals": {
     "enabled": true,
     "path": ".pi/evals",
-    "window": 1,
+    "windowDefault": $WIN,
+    "aggregatorDefault": "$AGG",
     "graderModel": "claude-haiku-4-5-20251001",
     "barWidth": 24
   }

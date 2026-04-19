@@ -31,12 +31,13 @@ That preps `~/tmp/hygiene/` with the 10 eval cases and a
 `.pi/settings.json` pointing at the built extension, then launches Pi
 in it.
 
-**One tweak for this suite:** the script writes `window: 1`, but these
-cases are about overall habits, not single-turn stunts, so a smoothed
-trend over the whole session is what you want to watch. Edit
-`~/tmp/hygiene/.pi/settings.json` and change `"window": 1` to
-`"window": "session"`, or do it from inside Pi with
-`/eval window session`.
+`windowDefault` is `-1` (session-wide, habit monitoring) and
+`aggregatorDefault` is `"all"` — the bar accumulates evidence across the
+entire session (habit violations from 10 turns ago still count). Seven
+per-turn cases (`claims-have-evidence`, `concise-when-asked`,
+`no-hallucinated-paths`, `tool-call-budget`, `no-unresolved-tool-errors`,
+`plan-before-multi-step`, `reads-before-edit`) override to `window: 1` in
+their frontmatter so they still reflect the most recent turn's reading.
 
 First time: build the extension once with
 `cd packages/eval-stripe && npm run build`.
@@ -62,6 +63,7 @@ Try a couple of prompts and watch the bar react to the agent's *style*:
 - `/eval last` — per-case results (pass/fail + reason) for the most recent turn.
 - `/eval run` — force a re-run on the last turn without new input.
 - `/eval window 1` — switch to single-turn view if you want sharper signal.
+- `/eval aggregator last` — switch to per-case state (most recent activation only).
 
 ## When these cases drift
 

@@ -180,4 +180,252 @@ check: |
 			all: [{ any_tool: "edit" }, { min_tool_calls: 2 }],
 		});
 	});
+
+	// -------------------------------------------------------------------------
+	// Per-case window field
+	// -------------------------------------------------------------------------
+
+	it("parses valid window: 5", async () => {
+		writeFileSync(
+			join(evalsDir, "window5.md"),
+			`---
+name: window5
+description: window 5
+kind: deterministic
+window: 5
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBe(5);
+	});
+
+	it("parses valid window: -1 (session)", async () => {
+		writeFileSync(
+			join(evalsDir, "window-session.md"),
+			`---
+name: window-session
+description: session window
+kind: deterministic
+window: -1
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBe(-1);
+	});
+
+	it("omitted window → case.window is undefined", async () => {
+		writeFileSync(
+			join(evalsDir, "no-window.md"),
+			`---
+name: no-window
+description: no window field
+kind: deterministic
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBeUndefined();
+	});
+
+	it("rejects window: 0", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-zero.md"),
+			`---
+name: bad-window-zero
+description: zero window
+kind: deterministic
+window: 0
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: -2 (invalid negative)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-neg.md"),
+			`---
+name: bad-window-neg
+description: negative window
+kind: deterministic
+window: -2
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: 1.5 (non-integer)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-float.md"),
+			`---
+name: bad-window-float
+description: float window
+kind: deterministic
+window: 1.5
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: 'session' (string — hard rename, no legacy)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-string.md"),
+			`---
+name: bad-window-string
+description: string window
+kind: deterministic
+window: "session"
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	// -------------------------------------------------------------------------
+	// Per-case aggregator field
+	// -------------------------------------------------------------------------
+
+	it("parses valid aggregator: all", async () => {
+		writeFileSync(
+			join(evalsDir, "agg-all.md"),
+			`---
+name: agg-all
+description: aggregator all
+kind: deterministic
+aggregator: all
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBe("all");
+	});
+
+	it("parses valid aggregator: last", async () => {
+		writeFileSync(
+			join(evalsDir, "agg-last.md"),
+			`---
+name: agg-last
+description: aggregator last
+kind: deterministic
+aggregator: last
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBe("last");
+	});
+
+	it("omitted aggregator → case.aggregator is undefined", async () => {
+		writeFileSync(
+			join(evalsDir, "no-agg.md"),
+			`---
+name: no-agg
+description: no aggregator field
+kind: deterministic
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].aggregator).toBeUndefined();
+	});
+
+	it("rejects aggregator: invalid string", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-string.md"),
+			`---
+name: bad-agg-string
+description: invalid aggregator
+kind: deterministic
+aggregator: every
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+		expect(result.errors[0]).toContain("every");
+	});
+
+	it("rejects aggregator: non-string type (number)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-number.md"),
+			`---
+name: bad-agg-number
+description: invalid aggregator type
+kind: deterministic
+aggregator: 1
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+	});
+
+	it("rejects aggregator: non-string type (boolean)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-agg-bool.md"),
+			`---
+name: bad-agg-bool
+description: invalid aggregator type
+kind: deterministic
+aggregator: true
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("aggregator");
+	});
 });

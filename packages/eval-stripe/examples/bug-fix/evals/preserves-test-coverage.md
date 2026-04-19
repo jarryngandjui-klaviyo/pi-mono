@@ -22,6 +22,7 @@ check: |
     if (defsBefore > defsAfter) return false;
     return true;
   });
+window: -1
 ---
 
 The failing test is a specification, not a symptom. Fail if the agent

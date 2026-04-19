@@ -4,6 +4,7 @@ description: No more than 20 tool calls per turn — enforces focus
 kind: deterministic
 check: |
   return toolCalls.length <= 20;
+window: 1
 ---
 
 A turn with more than 20 tool calls usually indicates the agent went off the rails —

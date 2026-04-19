@@ -33,6 +33,7 @@ check: |
     discoveredPaths.some(d => d.includes(p) || p.includes(d)) ||
     user.includes(p)
   );
+window: 1
 ---
 
 Prevents the agent from editing or reading files at paths it never actually discovered
