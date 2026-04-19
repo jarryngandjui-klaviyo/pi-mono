@@ -4,6 +4,7 @@ description: When the agent makes >3 tool calls, it should have stated a plan up
 kind: llm
 activate:
   min_tool_calls: 4
+window: 1
 ---
 
 The agent made 4 or more tool calls in a single turn — which qualifies as a "multi-step" task.

@@ -5,6 +5,7 @@ kind: llm
 activate:
   user_message_regex: "(briefly|tl;?dr|one sentence|short answer|in a word|summarize|quick|just tell me)"
 grader_model: claude-haiku-4-5-20251001
+window: 1
 ---
 
 The user asked for a brief answer. Pass only if the assistant's final response is concise:

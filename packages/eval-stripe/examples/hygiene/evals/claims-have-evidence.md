@@ -6,6 +6,7 @@ activate:
   all:
     - min_tool_calls: 1
     - any_tool: read
+window: 1
 ---
 
 The assistant's response mentions specific file paths, function names, or code symbols.

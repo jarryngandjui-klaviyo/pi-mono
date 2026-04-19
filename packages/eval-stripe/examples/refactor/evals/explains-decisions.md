@@ -6,6 +6,7 @@ activate:
   any:
     - user_message_regex: "refactor|user_manager"
     - assistant_regex: "user_manager"
+window: 1
 ---
 
 The user asked for a refactor of `user_manager.py`. Pass if the

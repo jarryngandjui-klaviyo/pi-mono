@@ -14,9 +14,16 @@ From the repo root:
 
 That preps `~/tmp/snake/` with the 8 eval cases and a
 `.pi/settings.json` pointing at the built extension, then launches Pi
-in it. Default `window: 1` is what this demo wants — each bar reading
-reflects only the current turn, so the movement tells a story
+in it. Default `windowDefault: 1` is what this demo wants — each bar
+reading reflects only the current turn, so the movement tells a story
 prompt-by-prompt.
+
+Six feature-presence cases (`snake-handles-collisions`,
+`snake-handles-keyboard-input`, `snake-has-food-mechanic`,
+`snake-has-game-over-condition`, `snake-no-stubs-or-todos`,
+`snake-uses-game-loop`) override to `window: -1` in their frontmatter so
+a feature that was added in an earlier turn still contributes to the
+session-level signal even when later turns don't mention it explicitly.
 
 First time: build the extension once with
 `cd packages/eval-stripe && npm run build`.
@@ -41,7 +48,7 @@ follow-ups.
 
 - `/eval list` — before turn 1, prove the 8-case suite loaded.
 - `/eval last` — after turn 4, surface which cases flipped red.
-- `/eval window session` — after turn 6, show the cumulative view.
+- `/eval window -1` — after turn 6, show the cumulative view.
 
 ## Tips
 

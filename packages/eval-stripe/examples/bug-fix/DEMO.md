@@ -28,8 +28,12 @@ From the repo root:
 
 That preps `~/tmp/bug-fix/` with `stats.py`, `test_stats.py`, the 6
 eval cases, and a `.pi/settings.json` pointing at the built extension,
-then launches Pi in it. Default `window: 1` is what this demo wants —
-each turn's bar reflects only that turn.
+then launches Pi in it. Default `windowDefault: 1` is what this demo
+wants — each turn's bar reflects only that turn.
+
+`preserves-test-coverage` overrides to `window: -1` in its frontmatter
+so a test-safe edit from any earlier turn keeps contributing to the
+session signal even if later turns don't re-trigger it.
 
 First time: build the extension once with
 `cd packages/eval-stripe && npm run build`.

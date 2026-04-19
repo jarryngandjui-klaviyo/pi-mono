@@ -12,6 +12,7 @@ check: |
     .filter(t => t.name === 'read')
     .map(t => t.args.file_path);
   return edits.every(p => reads.includes(p));
+window: 1
 ---
 
 Hygiene rule: the agent should always read a file before editing it.

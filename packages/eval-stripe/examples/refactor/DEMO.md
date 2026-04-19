@@ -23,11 +23,10 @@ That preps `~/tmp/refactor/` with `user_manager.py`, the 7 eval cases,
 and a `.pi/settings.json` pointing at the built extension, then
 launches Pi in it.
 
-**One tweak for this suite:** the script writes `window: 1`, but this
-refactor is a single task done over multiple turns — you want the bar
-to accumulate, not reset. Edit `~/tmp/refactor/.pi/settings.json` and
-change `"window": 1` to `"window": "session"`, or do it from inside Pi
-with `/eval window session`.
+`windowDefault` is `-1` (session-wide) — the bar accumulates refactor
+progress across all turns so partial work is visible. The one per-turn
+case (`explains-decisions`) overrides to `window: 1` in its frontmatter
+so the explanation check only fires on the most recent response.
 
 First time: build the extension once with
 `cd packages/eval-stripe && npm run build`.

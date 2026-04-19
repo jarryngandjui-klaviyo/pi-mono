@@ -14,6 +14,7 @@ check: |
     assistantLower.includes('error') && assistantLower.includes('failed')
   );
   return !mentionsError;
+window: 1
 ---
 
 Checks that tool errors don't silently slip through. The agent should either
