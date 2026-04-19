@@ -66,11 +66,20 @@ if [ ! -d "$SUITE_DIR/evals" ]; then
 fi
 
 DIR_NAME="${POSITIONAL[1]:-$SUITE}"
+
+# Refuse path-traversal so `rm -rf "$TARGET"` below can't escape ~/tmp.
+case "$DIR_NAME" in
+  */*|..|.|*..*|"")
+    echo "error: dir name '$DIR_NAME' must be a simple folder name (no slashes, no '..')." >&2
+    exit 1
+    ;;
+esac
+
 TARGET="$HOME/tmp/$DIR_NAME"
 
 if [ -e "$TARGET" ]; then
-  echo "error: $TARGET already exists. Remove it or choose a different dir." >&2
-  exit 1
+  echo "note: $TARGET already exists — removing and recreating."
+  rm -rf "$TARGET"
 fi
 
 # Before touching the filesystem, make sure the extension is built —
