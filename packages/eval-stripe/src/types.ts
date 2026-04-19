@@ -57,6 +57,13 @@ export interface EvalCase {
 	rubric?: string;
 	/** For llm: override grader model */
 	graderModel?: string;
+	/**
+	 * Per-case aggregation window override (optional).
+	 * Positive integer = last N activations of this case.
+	 * -1 = entire session (capped at MAX_RING_SIZE activations).
+	 * Omitted = use settings.windowDefault.
+	 */
+	window?: number;
 	/** Source file path */
 	filePath: string;
 }
@@ -108,10 +115,35 @@ export interface AggregatedScore {
 export interface EvalSettings {
 	path?: string; // default: ".pi/evals"
 	enabled?: boolean; // default: true
-	window?: number | "session"; // default: 1
+	/**
+	 * Default aggregation window for cases that do not declare their own window.
+	 * Positive integer = last N activations. -1 = entire session.
+	 * Default: 1.
+	 */
+	windowDefault?: number;
 	graderModel?: string; // default: "claude-haiku-4-5-20251001"
 	concurrency?: number; // default: 4
 	timeoutMs?: number; // default: 5000
 	sandboxTimeoutMs?: number; // default: 100
 	barWidth?: number; // default: 24
+}
+
+// ============================================================================
+// Window sentinel helpers
+// ============================================================================
+
+/** Safety cap for session windows — max activations kept per case */
+export const MAX_RING_SIZE = 1000;
+
+/** Returns true when the window value means "entire session." */
+export function isSessionWindow(w: number): boolean {
+	return w === -1;
+}
+
+/**
+ * Converts the raw window number into the actual deque capacity to use.
+ * -1 (session sentinel) maps to MAX_RING_SIZE; positive integers pass through.
+ */
+export function effectiveWindow(w: number): number {
+	return isSessionWindow(w) ? MAX_RING_SIZE : w;
 }
