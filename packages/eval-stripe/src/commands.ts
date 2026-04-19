@@ -96,12 +96,23 @@ async function handleLast(ctx: ExtensionCommandContext, deps: CommandDeps): Prom
 	}
 
 	const last = results[0];
-	const lines: string[] = [`Last turn: ${last.passed}/${last.activated} passed (${last.failed} failed)`, ""];
+	const allCases = deps.getCases();
+	const activatedNames = new Set(last.caseResults.map((r) => r.caseName));
+	const notActivated = allCases.filter((c) => !activatedNames.has(c.name));
+
+	const lines: string[] = [
+		`Last turn: ${last.passed}/${last.activated} passed · ${last.failed} failed · ${notActivated.length} not activated (of ${allCases.length} total)`,
+		"",
+	];
 
 	for (const r of last.caseResults) {
 		const icon = r.pass ? "✓" : "✗";
 		const tag = r.graderError ? " [grader error]" : "";
 		lines.push(`  ${icon} ${r.caseName}${tag}: ${r.reason}`);
+	}
+
+	for (const c of notActivated) {
+		lines.push(`  — ${c.name}: not activated`);
 	}
 
 	ctx.ui.notify(lines.join("\n"), "info");
