@@ -1,0 +1,23 @@
+packages/eval-stripe/scripts/bootstrap-demo.sh
+  ddd912c688e74c1d 69-77,81-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "1b3a54f9b7f3fd6819c6e638eb717ca727332248",
+  "prompts": {
+    "ddd912c688e74c1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aea8588e-fd92-4119-97d7-be9e7de7ce75",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "Jarry Ngandjui",
+      "messages": [],
+      "total_additions": 11,
+      "total_deletions": 2,
+      "accepted_lines": 208,
+      "overriden_lines": 0
+    }
+  }
+}
