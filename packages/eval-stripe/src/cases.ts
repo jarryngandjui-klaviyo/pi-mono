@@ -28,6 +28,7 @@ interface RawFrontmatter {
 	activate?: unknown;
 	check?: unknown;
 	grader_model?: unknown;
+	window?: unknown;
 }
 
 function parseActivate(raw: unknown): ActivatePredicate | undefined {
@@ -59,6 +60,27 @@ function parseActivate(raw: unknown): ActivatePredicate | undefined {
 	throw new Error(`Unknown activate predicate keys: ${Object.keys(obj).join(", ")}`);
 }
 
+/**
+ * Validate and parse the optional `window` frontmatter field.
+ * Valid values: -1 (session) or a positive integer >= 1.
+ * Rejects: 0, other negatives, non-integers, strings (including "session").
+ */
+function parseWindow(raw: unknown, filePath: string): number | undefined {
+	if (raw === undefined || raw === null) return undefined;
+	if (typeof raw !== "number") {
+		throw new Error(
+			`'window' must be a number (-1 for session, or a positive integer), got: ${JSON.stringify(raw)} in ${filePath}`,
+		);
+	}
+	if (!Number.isInteger(raw)) {
+		throw new Error(`'window' must be an integer, got: ${raw} in ${filePath}`);
+	}
+	if (raw !== -1 && raw < 1) {
+		throw new Error(`'window' must be -1 (session) or a positive integer >= 1, got: ${raw} in ${filePath}`);
+	}
+	return raw;
+}
+
 function parseCase(filePath: string, content: string): EvalCase {
 	// Split on frontmatter delimiters
 	const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -81,6 +103,7 @@ function parseCase(filePath: string, content: string): EvalCase {
 
 	const kind = frontmatter.kind as EvalKind;
 	const activate = parseActivate(frontmatter.activate);
+	const window = parseWindow(frontmatter.window, filePath);
 
 	if (kind === "deterministic") {
 		if (typeof frontmatter.check !== "string" || !frontmatter.check.trim()) {
@@ -92,6 +115,7 @@ function parseCase(filePath: string, content: string): EvalCase {
 			kind: "deterministic",
 			activate,
 			check: String(frontmatter.check),
+			window,
 			filePath,
 		};
 	} else {
@@ -105,6 +129,7 @@ function parseCase(filePath: string, content: string): EvalCase {
 			activate,
 			rubric,
 			graderModel,
+			window,
 			filePath,
 		};
 	}

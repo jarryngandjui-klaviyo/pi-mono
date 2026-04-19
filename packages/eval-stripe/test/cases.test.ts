@@ -180,4 +180,137 @@ check: |
 			all: [{ any_tool: "edit" }, { min_tool_calls: 2 }],
 		});
 	});
+
+	// -------------------------------------------------------------------------
+	// Per-case window field
+	// -------------------------------------------------------------------------
+
+	it("parses valid window: 5", async () => {
+		writeFileSync(
+			join(evalsDir, "window5.md"),
+			`---
+name: window5
+description: window 5
+kind: deterministic
+window: 5
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBe(5);
+	});
+
+	it("parses valid window: -1 (session)", async () => {
+		writeFileSync(
+			join(evalsDir, "window-session.md"),
+			`---
+name: window-session
+description: session window
+kind: deterministic
+window: -1
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBe(-1);
+	});
+
+	it("omitted window → case.window is undefined", async () => {
+		writeFileSync(
+			join(evalsDir, "no-window.md"),
+			`---
+name: no-window
+description: no window field
+kind: deterministic
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.errors).toEqual([]);
+		expect(result.cases[0].window).toBeUndefined();
+	});
+
+	it("rejects window: 0", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-zero.md"),
+			`---
+name: bad-window-zero
+description: zero window
+kind: deterministic
+window: 0
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: -2 (invalid negative)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-neg.md"),
+			`---
+name: bad-window-neg
+description: negative window
+kind: deterministic
+window: -2
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: 1.5 (non-integer)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-float.md"),
+			`---
+name: bad-window-float
+description: float window
+kind: deterministic
+window: 1.5
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
+
+	it("rejects window: 'session' (string — hard rename, no legacy)", async () => {
+		writeFileSync(
+			join(evalsDir, "bad-window-string.md"),
+			`---
+name: bad-window-string
+description: string window
+kind: deterministic
+window: "session"
+check: |
+  return true;
+---
+`,
+		);
+		const result = await loadCases(".pi/evals", dir);
+		expect(result.cases).toHaveLength(0);
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors[0]).toContain("window");
+	});
 });
